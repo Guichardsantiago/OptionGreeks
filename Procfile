@@ -1,0 +1,1 @@
+web: gunicorn OptionGreeks.wsgi --log-file -
