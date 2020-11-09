@@ -15,7 +15,9 @@ def blackScholesCall(S0, K, r, T, sigma, q=0):
     ret = {}
     if (S0 > 0 and K > 0 and r >= 0 and T > 0 and sigma > 0):        
         d1 = ( math.log(S0/K) + (r -q +sigma*sigma*0.5)*T ) / (sigma * math.sqrt(T))
+        ret['d1'] = d1
         d2 = d1 - sigma*math.sqrt(T)
+        ret['d2'] = d2
         ret['prime'] = math.exp(-q*T) * S0 * fi(d1)- K*math.exp(-r*T)*fi(d2)
         ret['delta'] = math.exp(-q*T) * fi(d1)
         ret['gamma'] = (normalInv(d1) * math.exp(-q*T)) / (S0 * sigma * math.sqrt(T))
@@ -29,7 +31,9 @@ def blackScholesPut(S0, K, r, T, sigma, q=0):
     ret = {}
     if (S0 > 0 and K > 0 and r >= 0 and T > 0 and sigma > 0):        
         d1 = ( math.log(S0/K) + (r -q +sigma*sigma*0.5)*T ) / (sigma * math.sqrt(T))
+        ret['d1'] = d1
         d2 = d1 - sigma*math.sqrt(T)
+        ret['d2'] = d2
         ret['prime'] = K*math.exp(-r*T)*fi(-d2) - math.exp(-q*T) * S0 * fi(-d1)
         ret['delta'] = - math.exp(-q*T) * fi(-d1)
         ret['gamma'] = math.exp(-q*T) * normalInv(d1) / (S0 * sigma * math.sqrt(T))
@@ -110,9 +114,27 @@ class BlackScholes():
         sigma = impliedVolatility(spotPrice, strikePrice, freeRiskInterestRate, timeInYears, optionPrice, optionType.lower())
         if optionType.lower() == 'call':
             result = blackScholesCall(spotPrice, strikePrice, freeRiskInterestRate, timeInYears, sigma)
-            return {'delta':result['delta'], 'gamma':result['gamma'], 'vega':result['vega'], 'theta':result['theta']}
+            return {
+             'delta':result['delta'],
+             'gamma':result['gamma'], 
+             'vega':result['vega'], 
+             'theta':result['theta'], 
+             'sigma': sigma, 
+             'fedFundRate': freeRiskInterestRate,
+             'd1': result['d1'],
+             'd2': result['d2'] 
+             }
         elif optionType.lower() == 'put':
             result = blackScholesPut(spotPrice, strikePrice, freeRiskInterestRate, timeInYears, sigma)
-            return {'delta':result['delta'], 'gamma':result['gamma'], 'vega':result['vega'], 'theta':result['theta']}
+            return {
+             'delta':result['delta'],
+             'gamma':result['gamma'], 
+             'vega':result['vega'], 
+             'theta':result['theta'], 
+             'sigma': sigma, 
+             'fedFundRate': freeRiskInterestRate,
+             'd1': result['d1'],
+             'd2': result['d2']
+             }
 
     
